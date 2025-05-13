@@ -20,7 +20,7 @@ export const addProduct = {
         }
 
         const response = await axios.post<productResponse>(
-          "Product/AddProduct",
+          "Product/AddProduct", 
           formData,
           {
             headers: {
