@@ -1,27 +1,12 @@
-import React, { useState, useMemo } from "react";
-
-type Product = {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
-  categoryId: number;
-};
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import api from "@/api";
 
 interface ShowProductsProps {
-  selectedCategoryId: number | null;
+  selectedCategoryId: string | null;
   onShowAllProducts: () => void;
-  onProductSelect: (productId: number) => void;
-  onFirstProductChange: (firstProductId: number | null) => void; // New callback
+  onProductSelect: (productId: string) => void;
+  onFirstProductChange: (firstProductId: string | null) => void;
 }
-
-export const allProducts: Product[] = Array.from({ length: 24 }).map((_, index) => ({
-  id: index + 1,
-  name: `Product ${index + 1}`,
-  price: `$${(index + 1) * 5}`,
-  image: `https://via.placeholder.com/150?text=Prod+${index + 1}`,
-  categoryId: (index % 8) + 1, // 8 categories (1 to 8)
-}));
 
 const ShowProducts: React.FC<ShowProductsProps> = ({
   selectedCategoryId,
@@ -30,14 +15,16 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
   onFirstProductChange,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 4 * 2; // 4 per row × 2 rows
+  const productsPerPage = 4 * 2;
+  const lastFirstProductId = useRef<string | null>(null);
 
-  // Filtered by category if selected
+  const { data: products = [], isLoading, error } = api.product.GetProducts.useQuery();
+
   const filteredProducts = useMemo(() => {
     return selectedCategoryId
-      ? allProducts.filter((p) => p.categoryId === selectedCategoryId)
-      : allProducts;
-  }, [selectedCategoryId]);
+      ? products.filter((p) => p.categoryId === selectedCategoryId)
+      : products;
+  }, [products, selectedCategoryId]);
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const currentProducts = filteredProducts.slice(
@@ -45,35 +32,54 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
     currentPage * productsPerPage
   );
 
-  // Update first product ID whenever currentProducts changes
-  React.useEffect(() => {
-    const firstProductId = currentProducts.length > 0 ? currentProducts[0].id : null;
-    onFirstProductChange(firstProductId);
+  useEffect(() => {
+    const firstProductId = currentProducts.length > 0 ? currentProducts[0].productId : null;
+    if (firstProductId !== lastFirstProductId.current && typeof onFirstProductChange === "function") {
+      onFirstProductChange(firstProductId);
+      lastFirstProductId.current = firstProductId;
+    }
   }, [currentProducts, onFirstProductChange]);
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategoryId]);
+
+  if (isLoading) {
+    return <div className="text-center">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-600">Error loading products: {error.message}</div>;
+  }
+
+  const API_BASE_URL = "https://localhost:7164"; // Hardcoded backend URL
 
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {currentProducts.map((product) => (
           <div
-            key={product.id}
+            key={product.productId}
             className="bg-white/80 rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
           >
             <img
-              src={product.image}
-              alt={product.name}
+              src={product.image ? `${API_BASE_URL}${product.image}` : "/fallback-image.jpg"}
+              alt={product.productName || "Product image"}
               className="w-full h-40 object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/fallback-image.jpg";
+              }}
             />
             <div className="p-4 text-center">
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                {product.name}
+                {product.productName}
               </h3>
-              <p className="text-gray-600 mb-3">{product.price}</p>
+              <p className="text-gray-600 mb-3">${product.price.toFixed(2)}</p>
               <button
-                onClick={() => onProductSelect(product.id)}
+                onClick={() => onProductSelect(product.productId)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
               >
                 Detail
@@ -83,7 +89,6 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
         ))}
       </div>
 
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="mt-6 flex justify-center items-center gap-4">
           <button
@@ -106,9 +111,8 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
         </div>
       )}
 
-      {/* Show All Products Button */}
       {selectedCategoryId && (
-        <div className="mt-6 text-center">
+        <div className=" Distance between the top and the bottom of the window is 6 units (mt-6), text is centered">
           <button
             onClick={onShowAllProducts}
             className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition"

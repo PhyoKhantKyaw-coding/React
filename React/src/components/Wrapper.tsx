@@ -5,8 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import LoginLayout from '@/layouts/LoginLayout';
 import LoginView from '@/modules/Auth/LoginView';
 import RegisterView from '@/modules/Auth/RegisterView';
-//import RetailHomeView from '@/modules/home/RetailHomeView'; 
-import AddProductForm from '@/modules/home/chunks/AddProductForm';
+import RetailHomeView from '@/modules/home/RetailHomeView';
 //import AdminDashboardLayout from '@/layouts/DashBoardLayout';
 
 const router = createBrowserRouter([
@@ -16,7 +15,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <AddProductForm /> // Home page, e.g. /home
+        element: <RetailHomeView /> // Home page, e.g. /home
       }
     ]
   },

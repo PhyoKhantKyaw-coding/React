@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UseMutationOptions, useMutation } from "@tanstack/react-query";
+import { UseMutationOptions, UseQueryOptions, useMutation,useQuery } from "@tanstack/react-query";
 
 export const addProduct = {
   useMutation: (
@@ -31,6 +31,38 @@ export const addProduct = {
 
         return response.data.data;
       },
+      ...opt,
+    });
+  },
+};
+export const GetProducts = {
+  useQuery: (
+    opt?: Partial<UseQueryOptions<Product[], Error>>
+  ) => {
+    return useQuery<Product[], Error>({
+      queryKey: ["products"],
+      queryFn: async (): Promise<Product[]> => {
+        const response = await axios.get<productsResponse>("Product/GetAllProducts");
+        return response.data.data;
+      },
+      ...opt,
+    });
+  },
+};
+export const CategoryGetById = {
+  useQuery: (
+    categoryId: string,
+    opt?: Partial<UseQueryOptions<string, Error>>
+  ) => {
+    return useQuery<string, Error>({
+      queryKey: ["category", categoryId],
+      queryFn: async (): Promise<string> => {
+        const response = await axios.get<{ data: string }>(
+          `Category/GetbyId?categoryId=${categoryId}`
+        );
+        return response.data.data; // ← just return the string directly
+      },
+      enabled: !!categoryId,
       ...opt,
     });
   },

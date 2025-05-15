@@ -3,15 +3,6 @@ import React, { useState, useEffect } from "react";
 interface AddtoCartProps {
   onClose: () => void;
 }
-
-interface CartItem {
-  productId: number;
-  quantity: number;
-  totalAmount: string;
-  productName: string;
-  productImage: string;
-}
-
 const AddtoCart: React.FC<AddtoCartProps> = ({ onClose }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
@@ -21,20 +12,15 @@ const AddtoCart: React.FC<AddtoCartProps> = ({ onClose }) => {
   };
 
   useEffect(() => {
-    // Load initial cart items
     updateCartItems();
-
-    // Listen for storage events to update cart items
     window.addEventListener("storage", updateCartItems);
-
-    // Cleanup event listener on unmount
     return () => window.removeEventListener("storage", updateCartItems);
   }, []);
 
   const handleClearCart = () => {
     localStorage.setItem("cart", JSON.stringify([]));
     setCartItems([]);
-    window.dispatchEvent(new Event("storage")); // Update cart count and other listeners
+    window.dispatchEvent(new Event("storage")); // Notify ProductDetail
   };
 
   return (

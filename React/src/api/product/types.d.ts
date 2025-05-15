@@ -37,3 +37,24 @@ type CreateProductInput = {
   product: productPayload;
   imageFile?: File | null;
 };
+type productsResponse ={
+    message: string;
+  status: number;
+  data: Product[] ;
+}
+interface Category {
+  categoryId: string;
+  name: string;
+}
+
+interface CategoryResponse {
+  data: Category;
+}
+
+interface CartItem {
+  productId: string;
+  quantity: number;
+  totalAmount: string;
+  productName: string;
+  productImage: string;
+}
