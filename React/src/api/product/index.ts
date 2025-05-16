@@ -49,6 +49,20 @@ export const GetProducts = {
     });
   },
 };
+export const GetCategory ={
+  useQuery: (
+    opt?: Partial<UseQueryOptions<Category[],Error>>
+  )=>{
+    return useQuery<Category[],Error>({
+      queryKey:["category"],
+      queryFn: async ():Promise<Category[]> =>{
+        const response = await axios.get<catResponse>("Category/GetAllCategory");
+        return response.data.data;
+      },
+      ...opt,
+    });
+  },
+};
 export const CategoryGetById = {
   useQuery: (
     categoryId: string,
@@ -60,12 +74,10 @@ export const CategoryGetById = {
         const response = await axios.get<{ data: string }>(
           `Category/GetbyId?categoryId=${categoryId}`
         );
-        return response.data.data; // ← just return the string directly
+        return response.data.data; 
       },
       enabled: !!categoryId,
       ...opt,
     });
   },
 };
-
-

@@ -1,12 +1,15 @@
-import AddtoCart from "@/modules/home/chunks/AddtoCard";
+import AddtoCart from "@/modules/home/chunks/AddtoCart";
 import { useState, useEffect, useRef } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import api from "@/api";
 
 const DefaultLayout: React.FC = () => {
   const [viewProfileBox, setViewProfileBox] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const profile = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const toggleProfileBox = () => setViewProfileBox((prev) => !prev);
   const toggleMenu = () => setMenuOpen((prev) => !prev);
@@ -31,12 +34,36 @@ const DefaultLayout: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = api.decodeToken(token);
+        setUser({ name: decoded.name, email: decoded.email });
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+  }, []);
+
   const toggleCartDialog = () => {
     const cartDialog = document.getElementById("cart-dialog");
     if (cartDialog) {
       cartDialog.classList.toggle("hidden");
     }
   };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUser(null);
+    setViewProfileBox(false);
+    navigate("/Auth/login");
+  };
+
+  const profileInitial = user?.name?.charAt(0).toUpperCase() || "U";
 
   return (
     <div className="min-h-screen flex flex-col bg-[radial-gradient(rgba(0,0,0,0.712)_10%,transparent_1%)] bg-[length:15px_11px] bg-[rgba(151,217,231,0.9)]">
@@ -96,33 +123,26 @@ const DefaultLayout: React.FC = () => {
                 onClick={toggleProfileBox}
                 className="w-10 h-10 rounded-full bg-white text-blue-600 font-semibold flex items-center justify-center hover:ring-4 ring-blue-300 transition"
               >
-                P
+                {profileInitial}
               </button>
               {viewProfileBox && (
                 <div className="absolute right-0 mt-2 w-64 bg-white text-black rounded-xl shadow-lg p-4 z-50">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                      P
+                      {profileInitial}
                     </div>
                     <div>
-                      <p className="font-semibold">Phyo Khant</p>
-                      <p className="text-sm text-gray-500">phyo@example.com</p>
+                      <p className="font-semibold">{user?.name || "Unknown User"}</p>
+                      <p className="text-sm text-gray-500">{user?.email || "No email"}</p>
                     </div>
                   </div>
                   <hr className="my-3" />
                   <ul className="space-y-2 text-sm">
                     <li>
-                      <a href="/profile" className="block hover:text-blue-600">
-                        Profile
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/settings" className="block hover:text-blue-600">
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <button className="text-left w-full hover:text-red-500">
+                      <button
+                        onClick={handleLogout}
+                        className="text-left w-full hover:text-red-500"
+                      >
                         Logout
                       </button>
                     </li>

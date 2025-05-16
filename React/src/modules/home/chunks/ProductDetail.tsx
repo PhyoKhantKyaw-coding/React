@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import api from "@/api";
-
+import { useDispatch } from "react-redux";
+import { hideLoader, openLoader } from "@/store/features/loaderSlice";
 interface ProductDetailProps {
   selectedProductId: string | null;
   defaultProductId: string | null;
 }
-
+ 
 const ProductDetail: React.FC<ProductDetailProps> = ({
   selectedProductId,
   defaultProductId,
@@ -15,7 +16,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [cartItems, setCartItems] = useState<
     { productId: string; quantity: number }[]
   >([]);
-
+ const dispatch = useDispatch();
   const {
     data: products = [],
     isLoading,
@@ -51,7 +52,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   } = api.product.CategoryGetById.useQuery(categoryId);
 
   if (isLoading) {
-    return <div className="text-center mt-4">Loading product details...</div>;
+   if(isLoading){
+     dispatch(openLoader())
+   }
+   else{
+     dispatch(hideLoader())
+   }
   }
 
   if (error) {

@@ -6,6 +6,8 @@ import LoginLayout from '@/layouts/LoginLayout';
 import LoginView from '@/modules/Auth/LoginView';
 import RegisterView from '@/modules/Auth/RegisterView';
 import RetailHomeView from '@/modules/home/RetailHomeView';
+import { store } from '@/store';
+import { Provider } from 'react-redux';
 //import AdminDashboardLayout from '@/layouts/DashBoardLayout';
 
 const router = createBrowserRouter([
@@ -38,12 +40,13 @@ const router = createBrowserRouter([
 const Wrapper = () => {
   const queryClient = new QueryClient();
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster />
-      </QueryClientProvider>
-    </>
+       <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            {/* <Loader /> */}
+            <Toaster />
+            <RouterProvider router={router}></RouterProvider>
+          </QueryClientProvider>
+       </Provider>
   );
 };
 

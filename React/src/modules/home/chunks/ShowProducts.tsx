@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import api from "@/api";
+import Loader from "@/components/Loader";
+import { useDispatch } from "react-redux";
+import { hideLoader, openLoader } from "@/store/features/LoaderSlice";
 
 interface ShowProductsProps {
   selectedCategoryId: string | null;
@@ -14,6 +17,7 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
   onProductSelect,
   onFirstProductChange,
 }) => {
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 4 * 2;
   const lastFirstProductId = useRef<string | null>(null);
@@ -47,9 +51,14 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
     setCurrentPage(1);
   }, [selectedCategoryId]);
 
-  if (isLoading) {
-    return <div className="text-center">Loading products...</div>;
+useEffect(() => {
+  if(isLoading){
+    dispatch(openLoader())
   }
+  else{
+    dispatch(hideLoader())
+  }
+}, [isLoading])
 
   if (error) {
     return <div className="text-center text-red-600">Error loading products: {error.message}</div>;
@@ -58,6 +67,8 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
   const API_BASE_URL = "https://localhost:7164"; // Hardcoded backend URL
 
   return (
+    <>
+    <Loader/>
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {currentProducts.map((product) => (
@@ -122,6 +133,7 @@ const ShowProducts: React.FC<ShowProductsProps> = ({
         </div>
       )}
     </div>
+    </>
   );
 };
 

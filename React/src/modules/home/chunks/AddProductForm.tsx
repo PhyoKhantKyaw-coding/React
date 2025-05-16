@@ -39,7 +39,7 @@ const transformFormData = (data: ProductFormData): CreateProductInput => {
   };
 };
 
-const AddProductForm: React.FC = () => {
+const AddProductForm = () => {
   const {
     register,
     handleSubmit,

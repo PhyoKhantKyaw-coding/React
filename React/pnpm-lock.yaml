@@ -23,6 +23,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.1.0
         version: 1.1.0(@types/react@19.0.10)(react@19.0.0)
+      '@reduxjs/toolkit':
+        specifier: ^2.8.2
+        version: 2.8.2(react-redux@9.2.0(@types/react@19.0.10)(react@19.0.0)(redux@5.0.1))(react@19.0.0)
       '@tanstack/react-query':
         specifier: ^5.59.16
         version: 5.59.16(react@19.0.0)
@@ -41,6 +44,9 @@ importers:
       i18next:
         specifier: ^23.16.3
         version: 23.16.3
+      jwt-decode:
+        specifier: ^4.0.0
+        version: 4.0.0
       lucide-react:
         specifier: ^0.452.0
         version: 0.452.0(react@19.0.0)
@@ -62,9 +68,15 @@ importers:
       react-icons:
         specifier: ^5.5.0
         version: 5.5.0(react@19.0.0)
+      react-redux:
+        specifier: ^9.2.0
+        version: 9.2.0(@types/react@19.0.10)(react@19.0.0)(redux@5.0.1)
       react-router-dom:
         specifier: ^6.27.0
         version: 6.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-spinners:
+        specifier: ^0.17.0
+        version: 0.17.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       sonner:
         specifier: ^2.0.3
         version: 2.0.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -568,6 +580,17 @@ packages:
       '@types/react':
         optional: true
 
+  '@reduxjs/toolkit@2.8.2':
+    resolution: {integrity: sha512-MYlOhQ0sLdw4ud48FoC5w0dH9VfWQjtCjreKwYTT3l+r427qYC5Y8PihNutepr8XrNaBUDQo9khWUwQxZaqt5A==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || ^18 || ^19
+      react-redux: ^7.2.1 || ^8.1.3 || ^9.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-redux:
+        optional: true
+
   '@remix-run/router@1.20.0':
     resolution: {integrity: sha512-mUnk8rPJBI9loFDZ+YzPGdeniYK+FTmRD1TMCz7ev2SNIozyKKpnGgsxO34u6Z4z/t0ITuu7voi/AshfsGsgFg==}
     engines: {node: '>=14.0.0'}
@@ -651,6 +674,9 @@ packages:
     resolution: {integrity: sha512-fbMkAF7fufku0N2dE5TBXcNlg0pt0cJue4xBRE2Qc5Vqikxr4VCgKj/ht6SMdFcOacVA9rqF70APJ8RN/4vMJw==}
     cpu: [x64]
     os: [win32]
+
+  '@standard-schema/spec@1.0.0':
+    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
@@ -830,6 +856,9 @@ packages:
 
   '@types/react@19.0.10':
     resolution: {integrity: sha512-JuRQ9KXLEjaUNjTWpzuR231Z2WpIwczOkBEIvbHNCzQefFIT0L8IqE6NV6ULLyC1SI/i234JnDoMkfg+RjQj2g==}
+
+  '@types/use-sync-external-store@0.0.6':
+    resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
 
   '@typescript-eslint/eslint-plugin@8.8.1':
     resolution: {integrity: sha512-xfvdgA8AP/vxHgtgU310+WBnLB4uJQ9XdyP17RebG26rLtDrQJV3ZYrcopX91GrHmMoH8bdSwMRh2a//TiJ1jQ==}
@@ -1173,6 +1202,9 @@ packages:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
 
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -1212,6 +1244,10 @@ packages:
 
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
+
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -1420,6 +1456,18 @@ packages:
     peerDependencies:
       react: '*'
 
+  react-redux@9.2.0:
+    resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
+    peerDependencies:
+      '@types/react': ^18.2.25 || ^19
+      react: ^18.0 || ^19
+      redux: ^5.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      redux:
+        optional: true
+
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
     engines: {node: '>=10'}
@@ -1453,6 +1501,12 @@ packages:
     peerDependencies:
       react: '>=16.8'
 
+  react-spinners@0.17.0:
+    resolution: {integrity: sha512-L/8HTylaBmIWwQzIjMq+0vyaRXuoAevzWoD35wKpNTxxtYXWZp+xtgkfD7Y4WItuX0YvdxMPU79+7VhhmbmuTQ==}
+    peerDependencies:
+      react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   react-style-singleton@2.2.3:
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
     engines: {node: '>=10'}
@@ -1467,8 +1521,19 @@ packages:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
 
+  redux-thunk@3.1.0:
+    resolution: {integrity: sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==}
+    peerDependencies:
+      redux: ^5.0.0
+
+  redux@5.0.1:
+    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
+
   regenerator-runtime@0.14.1:
     resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
+
+  reselect@5.1.1:
+    resolution: {integrity: sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -1594,6 +1659,11 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  use-sync-external-store@1.5.0:
+    resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   vite@5.4.8:
     resolution: {integrity: sha512-FqrItQ4DT1NC4zCUqMB4c4AZORMKIa0m8/URVCZ77OZ/QSNeJ54bU1vrFADbDsuwfIPcgknRkmqakQcgnL4GiQ==}
@@ -1973,6 +2043,18 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.10
 
+  '@reduxjs/toolkit@2.8.2(react-redux@9.2.0(@types/react@19.0.10)(react@19.0.0)(redux@5.0.1))(react@19.0.0)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@standard-schema/utils': 0.3.0
+      immer: 10.1.1
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 19.0.0
+      react-redux: 9.2.0(@types/react@19.0.10)(react@19.0.0)(redux@5.0.1)
+
   '@remix-run/router@1.20.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
@@ -2022,6 +2104,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.24.0':
     optional: true
+
+  '@standard-schema/spec@1.0.0': {}
 
   '@standard-schema/utils@0.3.0': {}
 
@@ -2161,6 +2245,8 @@ snapshots:
   '@types/react@19.0.10':
     dependencies:
       csstype: 3.1.3
+
+  '@types/use-sync-external-store@0.0.6': {}
 
   '@typescript-eslint/eslint-plugin@8.8.1(@typescript-eslint/parser@8.8.1(eslint@9.12.0(jiti@2.4.2))(typescript@5.6.3))(eslint@9.12.0(jiti@2.4.2))(typescript@5.6.3)':
     dependencies:
@@ -2543,6 +2629,8 @@ snapshots:
 
   ignore@5.3.2: {}
 
+  immer@10.1.1: {}
+
   import-fresh@3.3.0:
     dependencies:
       parent-module: 1.0.1
@@ -2571,6 +2659,8 @@ snapshots:
   json-schema-traverse@0.4.1: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
+
+  jwt-decode@4.0.0: {}
 
   keyv@4.5.4:
     dependencies:
@@ -2739,6 +2829,15 @@ snapshots:
     dependencies:
       react: 19.0.0
 
+  react-redux@9.2.0(@types/react@19.0.10)(react@19.0.0)(redux@5.0.1):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 19.0.0
+      use-sync-external-store: 1.5.0(react@19.0.0)
+    optionalDependencies:
+      '@types/react': 19.0.10
+      redux: 5.0.1
+
   react-remove-scroll-bar@2.3.8(@types/react@19.0.10)(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -2770,6 +2869,11 @@ snapshots:
       '@remix-run/router': 1.20.0
       react: 19.0.0
 
+  react-spinners@0.17.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
   react-style-singleton@2.2.3(@types/react@19.0.10)(react@19.0.0):
     dependencies:
       get-nonce: 1.0.1
@@ -2780,7 +2884,15 @@ snapshots:
 
   react@19.0.0: {}
 
+  redux-thunk@3.1.0(redux@5.0.1):
+    dependencies:
+      redux: 5.0.1
+
+  redux@5.0.1: {}
+
   regenerator-runtime@0.14.1: {}
+
+  reselect@5.1.1: {}
 
   resolve-from@4.0.0: {}
 
@@ -2894,6 +3006,10 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.0.10
+
+  use-sync-external-store@1.5.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
 
   vite@5.4.8(@types/node@22.7.5)(lightningcss@1.29.1):
     dependencies:

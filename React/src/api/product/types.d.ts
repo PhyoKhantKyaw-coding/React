@@ -42,16 +42,20 @@ type productsResponse ={
   status: number;
   data: Product[] ;
 }
-interface Category {
+type Category ={
   categoryId: string;
   name: string;
 }
-
-interface CategoryResponse {
+type catResponse ={
+  message: string;
+  status: number;
+  data: Category[];
+}
+type CategoryResponse = {
   data: Category;
 }
 
-interface CartItem {
+type CartItem = {
   productId: string;
   quantity: number;
   totalAmount: string;
