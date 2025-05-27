@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import api from "@/api";
 import Loader from "@/components/Loader";
 import { useDispatch } from "react-redux";
-import { hideLoader, openLoader } from "@/store/features/LoaderSlice";
+import { hideLoader, openLoader } from "@/store/features/loaderSlice";
 
 interface ShowProductsProps {
   selectedCategoryId: string | null;
@@ -64,7 +64,7 @@ useEffect(() => {
     return <div className="text-center text-red-600">Error loading products: {error.message}</div>;
   }
 
-  const API_BASE_URL = "https://localhost:7164"; // Hardcoded backend URL
+  const API_BASE_URL = "https://localhost:7164";
 
   return (
     <>

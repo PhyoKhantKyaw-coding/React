@@ -11,6 +11,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.8.2
         version: 2.8.2(react-redux@9.2.0(react@19.1.0)(redux@5.0.1))(react@19.1.0)
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.5
       react-redux:
         specifier: ^9.2.0
         version: 9.2.0(react@19.1.0)(redux@5.0.1)
@@ -18,6 +21,9 @@ importers:
         specifier: ^0.17.0
         version: 0.17.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
+      '@types/js-cookie':
+        specifier: ^3.0.6
+        version: 3.0.6
       vite:
         specifier: ^6.3.5
         version: 6.3.5
@@ -294,6 +300,9 @@ packages:
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
 
+  '@types/js-cookie@3.0.6':
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
+
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
 
@@ -317,6 +326,10 @@ packages:
 
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+
+  js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
 
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
@@ -588,6 +601,8 @@ snapshots:
 
   '@types/estree@1.0.7': {}
 
+  '@types/js-cookie@3.0.6': {}
+
   '@types/use-sync-external-store@0.0.6': {}
 
   esbuild@0.25.4:
@@ -626,6 +641,8 @@ snapshots:
     optional: true
 
   immer@10.1.1: {}
+
+  js-cookie@3.0.5: {}
 
   nanoid@3.3.11: {}
 

@@ -11,10 +11,12 @@
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "vite": "^6.3.5"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
+    "js-cookie": "^3.0.5",
     "react-redux": "^9.2.0",
     "react-spinners": "^0.17.0"
   }

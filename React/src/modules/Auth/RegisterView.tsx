@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { openLoader, hideLoader } from "@/store/features/LoaderSlice";
+import { openLoader, hideLoader } from "@/store/features/loaderSlice";
 import api from "@/api";
 import Loader from "@/components/Loader";
 
@@ -22,15 +22,15 @@ const RegisterView = () => {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
 
-  // Register mutation
+
   const {
     mutate: registerMutate,
     isPending: isRegisterPending,
   } = api.login.register.useMutation({
     onSuccess: (data) => {
-      console.log("Register API Response:", data); // Debug
+      console.log("Register API Response:", data); 
       if (data.status === 0 && data.message !== "User already exists. Register Failed") {
-        console.log("Email after registration:", formData.email); // Debug
+        console.log("Email after registration:", formData.email); 
         setOtpDialogOpen(true);
         setError(null);
         setFormData({
@@ -45,7 +45,7 @@ const RegisterView = () => {
       }
     },
     onError: (error) => {
-      console.error("Register Error:", error); // Debug
+      console.error("Register Error:", error); 
       setError(error?.message || "Registration failed");
     },
   });
@@ -56,16 +56,16 @@ const RegisterView = () => {
     isPending: isVerifyOtpPending,
   } = api.login.verifyOtp.useMutation({
     onSuccess: (data) => {
-      console.log("Verify OTP Response:", data); // Debug
+      console.log("Verify OTP Response:", data); 
       if (data.status === 0 && data.message === "Email verified successfully.") {
         setOtpDialogOpen(false);
-        navigate("/auth/login"); // Redirect to login page
+        navigate("/auth/login");
       } else {
         setOtpError(data.message || "OTP verification failed");
       }
     },
     onError: (error) => {
-      console.error("Verify OTP Error:", error); // Debug
+      console.error("Verify OTP Error:", error); 
       const apiError = error as { errors?: { email?: string[] }, message?: string };
       const errorMessage =
         apiError?.errors?.email?.[0] ||
@@ -75,16 +75,15 @@ const RegisterView = () => {
     },
   });
 
-  // Resend OTP mutation
+
   const {
     mutate: resendOtpMutate,
     isPending: isResendOtpPending,
   } = api.login.resendOtp.useMutation({
     onSuccess: (data) => {
-      console.log("Resend OTP Response:", data); // Debug
+      console.log("Resend OTP Response:", data);
       if (data.message === "New OTP sent to email.") {
         setOtpError(null);
-        alert("New OTP sent to email.");
       } else {
         setOtpError(data.message || "Failed to resend OTP");
       }
@@ -92,7 +91,7 @@ const RegisterView = () => {
     onError: (error) => {
       console.error("Resend OTP Error:", {
         message: error?.message
-      }); // Debug
+      });
       const apiError = error as { errors?: { email?: string[] }, message?: string };
       const errorMessage =
         apiError?.errors?.email?.[0] ||
@@ -103,7 +102,7 @@ const RegisterView = () => {
   });
 
   useEffect(() => {
-    console.log("Loader State:", { isRegisterPending, isVerifyOtpPending, isResendOtpPending }); // Debug
+    console.log("Loader State:", { isRegisterPending, isVerifyOtpPending, isResendOtpPending });
     if (isRegisterPending || isVerifyOtpPending || isResendOtpPending) {
       dispatch(openLoader());
     } else {
@@ -112,7 +111,7 @@ const RegisterView = () => {
   }, [isRegisterPending, isVerifyOtpPending, isResendOtpPending, dispatch]);
 
   useEffect(() => {
-    console.log("otpDialogOpen:", otpDialogOpen, "Email:", formData.email); // Debug
+    console.log("otpDialogOpen:", otpDialogOpen, "Email:", formData.email);
   }, [otpDialogOpen, formData.email]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,7 +137,7 @@ const RegisterView = () => {
       return;
     }
 
-    console.log("Submitting registration with email:", formData.email); // Debug
+    console.log("Submitting registration with email:", formData.email); 
     registerMutate({
       name: formData.username,
       email: formData.email,
@@ -156,7 +155,7 @@ const RegisterView = () => {
       return;
     }
 
-    console.log("Verifying OTP with email:", formData.email, "and OTP:", otp); // Debug
+    console.log("Verifying OTP with email:", formData.email, "and OTP:", otp); 
     verifyOtpMutate({
       email: formData.email,
       otp,
@@ -169,7 +168,7 @@ const RegisterView = () => {
       setOtpError("Email is required to resend OTP");
       return;
     }
-    console.log("Resending OTP with payload:", formData.email, "to endpoint: /api/v1/User/ResentOTP"); // Debug
+    console.log("Resending OTP with payload:", formData.email, "to endpoint: /api/v1/User/ResentOTP");
     resendOtpMutate(formData.email);
   };
 

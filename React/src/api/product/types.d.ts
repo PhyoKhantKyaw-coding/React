@@ -1,12 +1,11 @@
 
-// Type for the product entity returned by the API
 type Product = {
   productId: string;
   productName: string | null;
   stock: number;
   price: number;
   cost: number;
-  profit?: number; // Optional, not in backend but included in frontend
+  profit: number; 
   image: string | null;
   categoryId: string;
   description: string;
@@ -15,24 +14,22 @@ type Product = {
   activeFlag: boolean;
 };
 
-// Type for the product payload (matches AddProductDTO)
 type productPayload = {
   ProductName: string | null;
   Stock: number;
   Price: number;
   Cost: number;
-  CategoryId: string; // Sent as string, parsed as Guid in backend
+  CategoryId: string; 
   Description: string;
 };
 
-// Type for the API response
 type productResponse = {
   message: string;
   status: number;
-  data: Product; // Single Product, not product[]
+  data: Product; 
 };
 
-// Type for the mutation input (product payload + optional image)
+
 type CreateProductInput = {
   product: productPayload;
   imageFile?: File | null;
@@ -55,10 +52,10 @@ type CategoryResponse = {
   data: Category;
 }
 
-type CartItem = {
+interface CartItem {
   productId: string;
   quantity: number;
-  totalAmount: string;
+  price: string;
   productName: string;
   productImage: string;
 }

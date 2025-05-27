@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import  { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import ShowProducts from "./chunks/ShowProducts";
 import ProductDetail from "./chunks/ProductDetail";
@@ -9,7 +9,6 @@ const RetailHomeView = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [firstProductId, setFirstProductId] = useState<string | null>(null);
 
-  // Fetch categories using the provided API
   const { data: categories = [], isLoading: isCategoriesLoading, error: categoriesError } = api.product.GetCategory.useQuery();
 
   const handleShowAllProducts = () => {
@@ -38,9 +37,8 @@ const RetailHomeView = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-2 min-h-full">
-      {/* Section 111 - Popular Categories */}
       <div className="col-span-1 sm:col-span-3 h-fit bg-black/20 rounded-2xl p-4 text-white flex flex-col items-center">
-        <h2 className="mt-3 text-2xl sm:text-5xl font-semibold mb-3 text-center">
+        <h2 className="mt-0 text-2xl sm:text-5xl font-semibold mb-3 text-center">
           Popular Categories
         </h2>
         <p className="text-sm sm:text-2xl text-center max-w-2xl">

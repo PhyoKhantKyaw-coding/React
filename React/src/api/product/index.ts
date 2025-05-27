@@ -3,24 +3,16 @@ import { UseMutationOptions, UseQueryOptions, useMutation,useQuery } from "@tans
 
 export const addProduct = {
   useMutation: (
-    opt?: Partial<UseMutationOptions<Product, Error, CreateProductInput>>
+    opt?: Partial<UseMutationOptions<Product, Error, FormData>>
   ) => {
-    return useMutation<Product, Error, CreateProductInput>({
-      mutationFn: async ({ product, imageFile }: CreateProductInput): Promise<Product> => {
-        const formData = new FormData();
-
-        console.log("Product Payload:", product);
-        formData.append("product", JSON.stringify(product));
-
-        if (imageFile) {
-          formData.append("imageFile", imageFile);
-        }
+    return useMutation<Product, Error, FormData>({
+      mutationFn: async (formData: FormData): Promise<Product> => {
         for (const [key, value] of formData.entries()) {
           console.log(`FormData ${key}:`, value);
         }
 
         const response = await axios.post<productResponse>(
-          "Product/AddProduct", 
+          "Product/AddProduct",
           formData,
           {
             headers: {
@@ -45,6 +37,24 @@ export const GetProducts = {
         const response = await axios.get<productsResponse>("Product/GetAllProducts");
         return response.data.data;
       },
+      ...opt,
+    });
+  },
+};
+export const GetProductById = {
+  useQuery: (
+    productId: string,
+    opt?: Partial<UseQueryOptions<Product, Error>>
+  ) => {
+    return useQuery<Product, Error>({
+      queryKey: ["product", productId],
+      queryFn: async (): Promise<Product> => {
+        const response = await axios.get<productResponse>(
+          `Product/GetProductById?id=${productId}`
+        );
+        return response.data.data;
+      },
+      enabled: !!productId,
       ...opt,
     });
   },

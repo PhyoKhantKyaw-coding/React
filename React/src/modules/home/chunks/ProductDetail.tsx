@@ -1,39 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import api from "@/api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { hideLoader, openLoader } from "@/store/features/loaderSlice";
+import { addToCart } from "@/store/features/addtoCardSlice";
+import { RootState } from "@/store";
+
 interface ProductDetailProps {
   selectedProductId: string | null;
   defaultProductId: string | null;
 }
- 
+
 const ProductDetail: React.FC<ProductDetailProps> = ({
   selectedProductId,
   defaultProductId,
 }) => {
   const [quantity, setQuantity] = useState(1);
-  const [cartItems, setCartItems] = useState<
-    { productId: string; quantity: number }[]
-  >([]);
- const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart.cartItems);
+
   const {
     data: products = [],
     isLoading,
     error,
   } = api.product.GetProducts.useQuery();
 
-  // Update cart items from localStorage
-  const updateCartItems = () => {
-    const items = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCartItems(items);
-  };
-
   useEffect(() => {
-    updateCartItems();
-    window.addEventListener("storage", updateCartItems);
-    return () => window.removeEventListener("storage", updateCartItems);
-  }, []);
+    if (isLoading) {
+      dispatch(openLoader());
+    } else {
+      dispatch(hideLoader());
+    }
+  }, [isLoading, dispatch]);
 
   useEffect(() => {
     setQuantity(1);
@@ -50,15 +48,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     isLoading: isCategoryLoading,
     error: categoryError,
   } = api.product.CategoryGetById.useQuery(categoryId);
-
-  if (isLoading) {
-   if(isLoading){
-     dispatch(openLoader())
-   }
-   else{
-     dispatch(hideLoader())
-   }
-  }
 
   if (error) {
     return (
@@ -78,14 +67,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     );
   }
 
-  // Calculate cart quantity for this product
   const cartQuantity = cartItems
     .filter((item) => item.productId === productId)
-    .reduce((sum, item) => sum + item.quantity, 0);
+    .reduce((sum: number, item) => sum + item.quantity, 0);
 
-  // Available stock = API stock - cart quantity - selected quantity
-  const availableStock = product.stock - cartQuantity - quantity;
-  const totalAmount = (product.price * quantity).toFixed(2);
+  const availableStock = product.stock - cartQuantity;
+  const totalPrice = (product.price * quantity).toFixed(2);
 
   const handleIncrement = () => {
     if (quantity < product.stock - cartQuantity) {
@@ -107,36 +94,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       return;
     }
 
-    const cartItem = {
+    const cartItem: CartItem = {
       productId: product.productId,
       quantity,
-      totalAmount: `$${totalAmount}`,
-      productName: product.productName,
-      productImage: product.image,
+      price: product.price.toFixed(2),
+      productName: product.productName ?? "",
+      productImage: product.image ?? "",
     };
 
-    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingItemIndex = existingCart.findIndex(
-      (item: typeof cartItem) => item.productId === product.productId
-    );
-
-    let updatedCart;
-    if (existingItemIndex >= 0) {
-      // Update quantity if product exists in cart
-      updatedCart = [...existingCart];
-      updatedCart[existingItemIndex].quantity += quantity;
-      updatedCart[existingItemIndex].totalAmount = `$${(
-        product.price * updatedCart[existingItemIndex].quantity
-      ).toFixed(2)}`;
-    } else {
-      // Add new item
-      updatedCart = [...existingCart, cartItem];
-    }
-
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("storage"));
-    setQuantity(1); // Reset quantity after adding to cart
-
+    dispatch(addToCart(cartItem));
+    setQuantity(1);
     toast.success(`${product.productName} added to cart!`, {
       position: "top-right",
       duration: 3000,
@@ -196,10 +163,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           +
         </button>
       </div>
-      <p className="mb-4">Total: ${totalAmount}</p>
+      <p className="mb-4">Total: ${totalPrice}</p>
       <button
         onClick={handleAddToCart}
-        disabled={product.stock - cartQuantity === 0}
+        disabled={product.stock - cartQuantity <= 0}
         className="w-full px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition disabled:opacity-50"
       >
         Add to Cart

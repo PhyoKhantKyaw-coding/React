@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { openLoader, hideLoader } from "@/store/features/LoaderSlice";
+import { openLoader, hideLoader } from "@/store/features/loaderSlice";
 import api from "@/api";
 import Loader from "@/components/Loader";
+import useAuth from "@/hooks/useAuth";
 
 const LoginView = () => {
   const navigate = useNavigate();
@@ -11,13 +12,13 @@ const LoginView = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const{userLogin} = useAuth();
+  
 
   const { mutate, isPending } = api.login.login.useMutation({
     onSuccess: (data) => {
-      // Store token in localStorage
-      localStorage.setItem("token", data.data);
-      // Navigate to dashboard
-      navigate("/");
+    userLogin(data.data);
+    navigate("/");
     },
     onError: (err: Error) => {
       setError(err.message || "Login failed");

@@ -1,12 +1,12 @@
 import axios from "axios";
 import type { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import Cookies from "js-cookie";
 
 axios.defaults.baseURL = 'https://localhost:7164/api/v1/';
 
-// Add a request interceptor
 axios.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+    const token = Cookies.get('token'); 
     if (token) {
       config.headers!.Authorization = `Bearer ${token}`;
     }
@@ -17,15 +17,14 @@ axios.interceptors.request.use(
   }
 );
 
-// Add a response interceptor
 axios.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Redirect to login page if unauthorized
-      window.location.href = '/login';
+      window.location.href = '/auth/login';
+      Cookies.remove('token'); 
     }
     return Promise.reject(error);
   }

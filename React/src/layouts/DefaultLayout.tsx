@@ -1,28 +1,30 @@
-import AddtoCart from "@/modules/home/chunks/AddtoCart";
 import { useState, useEffect, useRef } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import api from "@/api";
+import useAuth from "@/hooks/useAuth";
+import Cookies from "js-cookie";
+import AddtoCart from "@/modules/home/chunks/AddtoCart";
+import OrdersHistory from "@/modules/home/chunks/OrdersHistory";
+import { RootState } from "@/store";
 
 const DefaultLayout: React.FC = () => {
   const [viewProfileBox, setViewProfileBox] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [isOrderHistoryDialogOpen, setIsOrderHistoryDialogOpen] = useState<boolean>(false);
+  const [addToCartOpen, setAddToCartOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<{ name: string | undefined; email: string | undefined } | null>(null);
   const profile = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { isAuthenticated, decodedUserData, userLogout } = useAuth();
+  const location = useLocation();
+  const userId = decodedUserData?.nameIdentifier || "";
+  const cartItemCount = useSelector((state: RootState) => state.cart.cartItems.length);
 
-  const toggleProfileBox = () => setViewProfileBox((prev) => !prev);
+  const { data: sales = [] } = api.sale.GetSalesByUserId.useQuery(userId);
+
+  const toggleProfileBox = () => setViewProfileBox(!viewProfileBox);
   const toggleMenu = () => setMenuOpen((prev) => !prev);
-
-  useEffect(() => {
-    const updateCartCount = () => {
-      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
-      setCartItemCount(cartItems.length);
-    };
-    updateCartCount();
-    window.addEventListener("storage", updateCartCount);
-    return () => window.removeEventListener("storage", updateCartCount);
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,89 +37,94 @@ const DefaultLayout: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const token = Cookies.get("token");
+    if (token && isAuthenticated && !user) {
       try {
-        const decoded = api.decodeToken(token);
-        setUser({ name: decoded.name, email: decoded.email });
+        setUser({ name: decodedUserData?.name, email: decodedUserData?.email });
       } catch (error) {
         console.error("Failed to decode token:", error);
         setUser(null);
+        userLogout();
+        navigate("/auth/login");
       }
-    } else {
+    } else if (!token && isAuthenticated) {
       setUser(null);
+      userLogout();
+      navigate("/auth/login");
     }
-  }, []);
+  }, [isAuthenticated, decodedUserData, userLogout, navigate, user]);
 
   const toggleCartDialog = () => {
-    const cartDialog = document.getElementById("cart-dialog");
-    if (cartDialog) {
-      cartDialog.classList.toggle("hidden");
-    }
+    setAddToCartOpen(true);
+  };
+
+  const handleOrderClick = () => {
+    setIsOrderHistoryDialogOpen(true);
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    userLogout();
     setUser(null);
     setViewProfileBox(false);
-    navigate("/Auth/login");
+    navigate("/auth/login");
   };
 
   const profileInitial = user?.name?.charAt(0).toUpperCase() || "U";
 
+  if (!isAuthenticated) {
+    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  }
+
+  if (decodedUserData?.role === "Admin") {
+    return <Navigate to="/admin/home" state={{ from: location }} replace />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[radial-gradient(rgba(0,0,0,0.712)_10%,transparent_1%)] bg-[length:15px_11px] bg-[rgba(151,217,231,0.9)]">
-      {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-blue-400 to-green-400 shadow-xl text-white px-4 sm:px-6 py-3 rounded-b-2xl">
+      <header className="fixed top-3 left-0 w-full z-50 bg-gradient-to-r from-blue-400 to-green-400 shadow-xl text-white px-4 sm:px-6 py-3 rounded-b-2xl">
         <div className="container min-w-full flex items-center justify-between flex-wrap gap-4">
           <h1 className="text-xl sm:text-2xl font-bold">
             Retail Management System
           </h1>
           <div className="flex items-center gap-4">
-            {/* Hamburger Menu */}
             <button
               onClick={toggleMenu}
               className="sm:hidden text-white text-2xl focus:outline-none"
             >
               ☰
             </button>
-
-            {/* Nav Menu */}
             <nav
-              className={`absolute sm:static top-16 right-4 sm:right-auto bg-blue-400 sm:bg-transparent rounded-lg p-4 sm:p-0 flex flex-col sm:flex-row gap-3 sm:gap-6 items-start sm:items-center shadow-lg sm:shadow-none z-40 transition-all ${
-                menuOpen ? "flex" : "hidden sm:flex"
-              }`}
+              className={`absolute sm:static top-16 right-4 sm:right-auto bg-blue-400 sm:bg-transparent rounded-lg p-4 sm:p-0 flex flex-col sm:flex-row gap-3 sm:gap-6 items-start sm:items-center shadow-lg sm:shadow-none z-40 transition-all ${menuOpen ? "flex" : "hidden sm:flex"}`}
             >
-              <a href="/" className="hover:underline">
+              <Link to="/" className="hover:underline">
                 Home
-              </a>
-              <a href="/products" className="hover:underline">
+              </Link>
+              <Link to="/products" className="hover:underline">
                 Products
-              </a>
-              <a href="/orders" className="hover:underline">
-                Orders
-              </a>
-              <a href="/reports" className="hover:underline">
+              </Link>
+              <Link to="/reports" className="hover:underline">
                 Reports
-              </a>
+              </Link>
+              <div className="relative mb-2">
+                <button
+                  className="text-white text-1xl focus:outline-none mr-3"
+                  onClick={handleOrderClick}
+                >
+                  Orders
+                </button>
+                <button
+                  className="text-white text-2xl focus:outline-none"
+                  onClick={toggleCartDialog}
+                >
+                  🛒
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {cartItemCount}
+                    </span>
+                  )}
+                </button>
+              </div>
             </nav>
-
-            {/* Cart */}
-            <div className="relative">
-              <button
-                className="text-white text-2xl focus:outline-none"
-                onClick={toggleCartDialog}
-              >
-                🛒
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartItemCount}
-                  </span>
-                )}
-              </button>
-            </div>
-
-            {/* Profile */}
             <div className="relative" ref={profile}>
               <button
                 onClick={toggleProfileBox}
@@ -153,26 +160,24 @@ const DefaultLayout: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* Main Content */}
       <main className="pt-28 px-4 sm:px-6 lg:px-8 flex-1">
         <Outlet />
-        {/* Cart Dialog */}
         <div
-          id="cart-dialog"
-          className="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className={`${addToCartOpen ? "flex" : "hidden"} fixed inset-0 bg-black/50 items-center justify-center z-50`}
         >
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm sm:max-w-md md:max-w-lg">
-            <AddtoCart onClose={toggleCartDialog} />
+          <div className="bg-white rounded-2xl min-w-full p-6 max-w-lg sm:max-w-md md:max-w-lg">
+            <AddtoCart setIsOpen={setAddToCartOpen} />
           </div>
         </div>
+        <OrdersHistory
+          isOpen={isOrderHistoryDialogOpen}
+          setIsOpen={setIsOrderHistoryDialogOpen}
+          data={sales}
+        />
       </main>
-
-      {/* Footer */}
       <footer className="bg-gray-800 text-white text-center text-sm sm:text-base p-4">
         <p>
-          © {new Date().getFullYear()} Dragon Retail Management. All rights
-          reserved.
+          © {new Date().getFullYear()} Dragon Retail Management. All rights reserved.
         </p>
       </footer>
     </div>

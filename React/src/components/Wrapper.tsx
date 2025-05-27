@@ -3,12 +3,13 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
 import LoginLayout from '@/layouts/LoginLayout';
-import LoginView from '@/modules/Auth/LoginView';
-import RegisterView from '@/modules/Auth/RegisterView';
+import LoginView from '@/modules/auth/LoginView';
+import RegisterView from '@/modules/auth/RegisterView';
 import RetailHomeView from '@/modules/home/RetailHomeView';
 import { store } from '@/store';
 import { Provider } from 'react-redux';
-//import AdminDashboardLayout from '@/layouts/DashBoardLayout';
+import DashBoardLayout from '@/layouts/DashBoardLayout';
+import AdminDashboardPage from '@/modules/admin/AdminHomeView';
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <RetailHomeView /> // Home page, e.g. /home
+        element: <RetailHomeView /> 
       }
     ]
   },
@@ -34,6 +35,20 @@ const router = createBrowserRouter([
         element: <RegisterView />
       }
     ]
+  },
+    {
+    path: '/admin', 
+    element: <DashBoardLayout />,
+    children: [
+      {
+        path: 'home', 
+        element: <AdminDashboardPage />
+      },
+      {
+        path: 'register', 
+        element: <RegisterView />
+      }
+    ]
   }
 ]);
 
@@ -42,7 +57,6 @@ const Wrapper = () => {
   return (
        <Provider store={store}>
           <QueryClientProvider client={queryClient}>
-            {/* <Loader /> */}
             <Toaster />
             <RouterProvider router={router}></RouterProvider>
           </QueryClientProvider>
