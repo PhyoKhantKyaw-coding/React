@@ -12,6 +12,7 @@ interface ProductDetailDialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   productId: string | null;
+   onClose?: () => void;
 }
 
 const API_BASE_URL = "https://localhost:7164";
@@ -20,6 +21,7 @@ const ProductDetailDialog: React.FC<ProductDetailDialogProps> = ({
   isOpen,
   setIsOpen,
   productId,
+    onClose,
 }) => {
   const { data: product, isLoading, error } = GetProductById.useQuery(productId || "");
   const { data: categories, isLoading: isCategoryLoading, error: categoryError } = GetCategory.useQuery();
@@ -27,9 +29,16 @@ const ProductDetailDialog: React.FC<ProductDetailDialogProps> = ({
   const category = categories?.find((cat: Category) => cat.categoryId === product?.categoryId);
   const categoryName = category?.name || "Unknown";
 
+    const handleClose = () => {
+    setIsOpen(false);
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-lg p-4 rounded-2xl shadow-md bg-gray-800">
+    <Dialog  open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className=" p-4 rounded-2xl shadow-md max-h-screen bg-gray-800">
         <DialogHeader>
           <DialogTitle className="text-white">Product Details</DialogTitle>
         </DialogHeader>
@@ -48,10 +57,7 @@ const ProductDetailDialog: React.FC<ProductDetailDialogProps> = ({
                           : "/fallback-image.jpg"
                       }
                       alt={product.productName || "Product image"}
-                      className="w-full h-80 object-center rounded-lg mb-4"
-                      onError={(e) => {
-                        e.currentTarget.src = "/fallback-image.jpg";
-                      }}
+                      className="w-fit h-60 object-center rounded-lg mb-3"          
                     />
             <h2 className="text-xl font-semibold mb-2">{product.productName || "Unnamed Product"}</h2>
             <p className="mb-2">Price: ${product.price.toFixed(2)}</p>

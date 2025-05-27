@@ -82,30 +82,6 @@ export const orderHistoryColumns = ({ setSelectedSaleId, setIsDetailsDialogOpen 
     },
   },
   {
-    accessorKey: "totalProfit",
-    header: () => <div className="text-right">Total Profit</div>,
-    cell: ({ row }) => {
-      const profit = parseFloat(row.getValue("totalProfit"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(profit);
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "totalCost",
-    header: () => <div className="text-right">Total Cost</div>,
-    cell: ({ row }) => {
-      const cost = parseFloat(row.getValue("totalCost"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(cost);
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
-  },
-  {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
@@ -120,11 +96,6 @@ export const orderHistoryColumns = ({ setSelectedSaleId, setIsDetailsDialogOpen 
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="z-1000">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(sale.saleId)}
-            >
-              Copy Sale ID
-            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 setSelectedSaleId(sale.saleId);

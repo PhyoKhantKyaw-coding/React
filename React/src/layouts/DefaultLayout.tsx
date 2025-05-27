@@ -1,27 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import api from "@/api";
 import useAuth from "@/hooks/useAuth";
 import Cookies from "js-cookie";
 import AddtoCart from "@/modules/home/chunks/AddtoCart";
-import OrdersHistory from "@/modules/home/chunks/OrdersHistory";
 import { RootState } from "@/store";
 
 const DefaultLayout: React.FC = () => {
   const [viewProfileBox, setViewProfileBox] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isOrderHistoryDialogOpen, setIsOrderHistoryDialogOpen] = useState<boolean>(false);
   const [addToCartOpen, setAddToCartOpen] = useState<boolean>(false);
   const [user, setUser] = useState<{ name: string | undefined; email: string | undefined } | null>(null);
   const profile = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { isAuthenticated, decodedUserData, userLogout } = useAuth();
   const location = useLocation();
-  const userId = decodedUserData?.nameIdentifier || "";
   const cartItemCount = useSelector((state: RootState) => state.cart.cartItems.length);
-
-  const { data: sales = [] } = api.sale.GetSalesByUserId.useQuery(userId);
 
   const toggleProfileBox = () => setViewProfileBox(!viewProfileBox);
   const toggleMenu = () => setMenuOpen((prev) => !prev);
@@ -58,10 +52,6 @@ const DefaultLayout: React.FC = () => {
     setAddToCartOpen(true);
   };
 
-  const handleOrderClick = () => {
-    setIsOrderHistoryDialogOpen(true);
-  };
-
   const handleLogout = () => {
     userLogout();
     setUser(null);
@@ -81,7 +71,7 @@ const DefaultLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[radial-gradient(rgba(0,0,0,0.712)_10%,transparent_1%)] bg-[length:15px_11px] bg-[rgba(151,217,231,0.9)]">
-      <header className="fixed top-3 left-0 w-full z-50 bg-gradient-to-r from-blue-400 to-green-400 shadow-xl text-white px-4 sm:px-6 py-3 rounded-b-2xl">
+      <header className=" left-0 w-full z-50 bg-gradient-to-r from-blue-400 to-green-400 shadow-xl text-white px-4 sm:px-6 py-3 rounded-b-2xl">
         <div className="container min-w-full flex items-center justify-between flex-wrap gap-4">
           <h1 className="text-xl sm:text-2xl font-bold">
             Retail Management System
@@ -99,19 +89,13 @@ const DefaultLayout: React.FC = () => {
               <Link to="/" className="hover:underline">
                 Home
               </Link>
-              <Link to="/products" className="hover:underline">
+              <Link to="/" className="hover:underline">
                 Products
               </Link>
-              <Link to="/reports" className="hover:underline">
-                Reports
-              </Link>
               <div className="relative mb-2">
-                <button
-                  className="text-white text-1xl focus:outline-none mr-3"
-                  onClick={handleOrderClick}
-                >
+                <Link to="/orders" className="hover:underline mr-3">
                   Orders
-                </button>
+                </Link>
                 <button
                   className="text-white text-2xl focus:outline-none"
                   onClick={toggleCartDialog}
@@ -160,20 +144,15 @@ const DefaultLayout: React.FC = () => {
           </div>
         </div>
       </header>
-      <main className="pt-28 px-4 sm:px-6 lg:px-8 flex-1">
+      <main className="sm:px-6 lg:px-8 flex-1">
         <Outlet />
         <div
           className={`${addToCartOpen ? "flex" : "hidden"} fixed inset-0 bg-black/50 items-center justify-center z-50`}
         >
-          <div className="bg-white rounded-2xl min-w-full p-6 max-w-lg sm:max-w-md md:max-w-lg">
+          <div className="bg-white rounded-2xl min-w-[900px] p-6 max-w-lg sm:max-w-md md:max-w-lg">
             <AddtoCart setIsOpen={setAddToCartOpen} />
           </div>
         </div>
-        <OrdersHistory
-          isOpen={isOrderHistoryDialogOpen}
-          setIsOpen={setIsOrderHistoryDialogOpen}
-          data={sales}
-        />
       </main>
       <footer className="bg-gray-800 text-white text-center text-sm sm:text-base p-4">
         <p>

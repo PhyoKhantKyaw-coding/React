@@ -6,10 +6,11 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 interface ProductTableProps {
   setSelectedProductId: React.Dispatch<React.SetStateAction<string | null>>;
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>; // For View Details
+  setIsUpdateDialogOpen: React.Dispatch<React.SetStateAction<boolean>>; // For Update
 }
 
-export const productColumns = ({ setSelectedProductId, setIsDialogOpen }: ProductTableProps): ColumnDef<Product>[] => [
+export const productColumns = ({ setSelectedProductId, setIsDialogOpen, setIsUpdateDialogOpen }: ProductTableProps): ColumnDef<Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -39,6 +40,31 @@ export const productColumns = ({ setSelectedProductId, setIsDialogOpen }: Produc
     enableSorting: false,
   },
   {
+    accessorKey: "productImage",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Product Image
+        <ArrowUpDown className="ml-0 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div>
+        <img
+          src={
+            row.original.image
+              ? `${"https://localhost:7164"}${row.original.image}`
+              : "/fallback-image.jpg"
+          }
+          alt={row.original.productName || "Product Image"}
+          className="w-20 h-20 ml-7 object-cover rounded"
+        />
+      </div>
+    ),
+  },
+  {
     accessorKey: "productName",
     header: ({ column }) => (
       <Button
@@ -46,7 +72,7 @@ export const productColumns = ({ setSelectedProductId, setIsDialogOpen }: Produc
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Product Name
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-0 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => <div>{row.original.productName || "Unnamed Product"}</div>,
@@ -98,7 +124,9 @@ export const productColumns = ({ setSelectedProductId, setIsDialogOpen }: Produc
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="max-w-xs truncate">{row.getValue("description")}</div>
+      <div className="w-[100px] whitespace-normal">
+        {row.getValue("description")}
+      </div>
     ),
   },
   {
@@ -129,6 +157,14 @@ export const productColumns = ({ setSelectedProductId, setIsDialogOpen }: Produc
               }}
             >
               View Details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setSelectedProductId(product.productId);
+                setIsUpdateDialogOpen(true);
+              }}
+            >
+              Update
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

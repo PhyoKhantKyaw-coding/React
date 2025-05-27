@@ -79,10 +79,8 @@ useEffect(() => {
             <img
               src={product.image ? `${API_BASE_URL}${product.image}` : "/fallback-image.jpg"}
               alt={product.productName || "Product image"}
-              className="w-full h-40 object-cover"
-              onError={(e) => {
-                e.currentTarget.src = "/fallback-image.jpg";
-              }}
+              className="w-full h-50 object-fill"
+
             />
             <div className="p-4 text-center">
               <h3 className="text-lg font-semibold text-gray-800 mb-2">

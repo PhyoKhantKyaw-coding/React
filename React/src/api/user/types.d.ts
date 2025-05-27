@@ -4,7 +4,7 @@ type User ={
     email: string | null;
     role: string;    
     status: string;
-    phone: string | null;
+    phoneNumber: string | null;
 }
 type UserResponse = {
     message: string;

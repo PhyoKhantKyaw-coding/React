@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Outlet, NavLink, useLocation, Navigate } from "react-router-dom";
+import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSidebar } from "@/store/features/adminSidebarSlice";
 import { RootState } from "@/store";
@@ -10,15 +10,14 @@ const sidebarData = [
   { to: "products", label: "Dashboard" },
   { to: "users", label: "Users" },
   { to: "categories", label: "Categories" },
-  { to: "sales", label: "Sales" },
-  { to: "settings", label: "Settings" },
+  { to: "sales", label: "Sales" }
 ];
 
 const AdminDashboardLayout = () => {
   const [viewProfileBox, setViewProfileBox] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string | undefined; email: string | undefined } | null>(null);
+  // const [user, setUser] = useState<{ name: string | undefined; email: string | undefined } | null>(null);
   const profile = useRef<HTMLDivElement>(null);
   const activeSidebar = useSelector((state: RootState) => state.adminSidebar.sidebar);
   const dispatch = useDispatch();
@@ -39,21 +38,6 @@ const AdminDashboardLayout = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated && decodedUserData) {
-      try {
-        setUser({ name: decodedUserData.name, email: decodedUserData.email });
-      } catch (error) {
-        console.error("Failed to set user data:", error);
-        setUser(null);
-        userLogout();
-      }
-    } else {
-      setUser(null);
-      userLogout();
-    }
-  }, [isAuthenticated, decodedUserData, userLogout]);
-
   const handleSidebarClick = (to: string) => () => {
     dispatch(setSidebar(to));
     setSidebarOpen(false);
@@ -61,11 +45,10 @@ const AdminDashboardLayout = () => {
 
   const handleLogout = () => {
     userLogout();
-    setUser(null);
     setViewProfileBox(false);
   };
 
-  const profileInitial = user?.name?.charAt(0).toUpperCase() || "A";
+  const profileInitial = decodedUserData?.name?.charAt(0).toUpperCase() || "A";
 
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
@@ -120,7 +103,7 @@ const AdminDashboardLayout = () => {
 
       <div className="flex-1 flex flex-col">
         <header
-          className={`fixed top-2 left-0 ${
+          className={`top-2 left-0 ${
             sidebarOpen ? "lg:left-64" : "lg:left-0"
           } right-0 pt-2 pb-2 z-40 rounded-2xl bg-gradient-to-r from-blue-400 to-green-400 shadow-xl text-white px-2 sm:px-4 transition-all duration-300`}
         >
@@ -134,7 +117,7 @@ const AdminDashboardLayout = () => {
                 {sidebarOpen ? "◄" : "☰"}
               </button>
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">
-                Admin Retail Management
+                Admin Dashboard
               </h1>
             </div>
             <div className="flex mr-2.5 items-center gap-2 sm:gap-3">
@@ -149,28 +132,7 @@ const AdminDashboardLayout = () => {
                 className={`absolute sm:static top-14 sm:top-auto right-2 sm:right-auto bg-blue-400 sm:bg-transparent rounded-lg p-2 sm:p-0 flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 items-start sm:items-center shadow-lg sm:shadow-none z-40 ${
                   menuOpen ? "flex" : "hidden sm:flex"
                 }`}
-              >
-                <NavLink
-                  to="/admin/products"
-                  className="text-sm sm:text-base hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Products
-                </NavLink>
-                <NavLink
-                  to="/admin/orders"
-                  className="text-sm sm:text-base hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Orders
-                </NavLink>
-                <NavLink
-                  to="/admin/reports"
-                  className="text-sm sm:text-base hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Reports
-                </NavLink>
+              >  
                 <div ref={profile}>
                 <button
                   onClick={toggleProfileBox}
@@ -187,10 +149,10 @@ const AdminDashboardLayout = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-sm sm:text-base">
-                          {user?.name || "Admin User"}
+                          {decodedUserData?.name || "Admin User"}
                         </p>
                         <p className="text-xs sm:text-sm text-gray-500">
-                          {user?.email || "admin@example.com"}
+                          {decodedUserData?.email || "admin@example.com"}
                         </p>
                       </div>
                     </div>
@@ -215,9 +177,9 @@ const AdminDashboardLayout = () => {
         </header>
 
         <main
-          className={`flex-1 pt-16 sm:pt-20 ${
+          className={`flex-1  ${
             sidebarOpen ? "lg:pl-64" : "lg:pl-0"
-          } px-2 sm:px-4 md:px-6 lg:px-8 pb-8 min-h-[calc(100vh-8rem)] transition-all duration-300`}
+          }  sm:px-4 md:px-6 lg:px-8 pb-8 min-h-[calc(100vh-8rem)] transition-all duration-300`}
         >
           <Outlet />
         </main>

@@ -27,6 +27,22 @@ export const addProduct = {
     });
   },
 };
+export const updateProduct = {
+  useMutation: (opt?: Partial<UseMutationOptions<Product, Error, FormData>>) => {
+    return useMutation<Product, Error, FormData>({
+      mutationFn: async (formData: FormData): Promise<Product> => {
+        for (const [key, value] of formData.entries()) {
+          console.log(`FormData ${key}:`, value);
+        }
+        const response = await axios.patch<productResponse>("Product/UpdateProduct", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        return response.data.data;
+      },
+      ...opt,
+    });
+  },
+};
 export const GetProducts = {
   useQuery: (
     opt?: Partial<UseQueryOptions<Product[], Error>>

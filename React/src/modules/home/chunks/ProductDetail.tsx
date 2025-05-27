@@ -122,10 +122,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             : "/fallback-image.jpg"
         }
         alt={product.productName || "Product image"}
-        className="w-full h-80 object-cover rounded-lg mb-4"
-        onError={(e) => {
-          e.currentTarget.src = "/fallback-image.jpg";
-        }}
+        className="w-full h-90 object-fill rounded-lg mb-4"
       />
       <h2 className="text-xl font-semibold mb-2">{product.productName}</h2>
       <p className="mb-2">Price: ${product.price.toFixed(2)}</p>

@@ -61,9 +61,9 @@ const ShowAllUserTable: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center text-white">Users</h2>
-      {isLoading && <div className="text-center text-white">Loading users...</div>}
+    <div className="max-w-7xl">
+      <h2 className="text-2xl font-bold mb-6 text-center text-black">Users</h2>
+      {isLoading && <div className="text-center text-black">Loading users...</div>}
       {error && (
         <div className="text-center text-red-600">
           Failed to load users: {error.message}
@@ -115,7 +115,7 @@ const ShowAllUserTable: React.FC = () => {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-white">
+                      <TableHead key={header.id} className="text-black">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -135,7 +135,7 @@ const ShowAllUserTable: React.FC = () => {
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-white">
+                        <TableCell key={cell.id} className="text-black">
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
@@ -146,7 +146,7 @@ const ShowAllUserTable: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={userColumns.length} className="h-24 text-center text-white">
+                    <TableCell colSpan={userColumns.length} className="h-24 text-center text-black">
                       No users found.
                     </TableCell>
                   </TableRow>

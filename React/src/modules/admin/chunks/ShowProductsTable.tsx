@@ -27,22 +27,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ChevronDown } from "lucide-react";
-import { GetProducts } from "@/api/product";
-import { productColumns } from "@/modules/admin/tableColumns/ProductColumns";
+import api from "@/api";
+import productColumns from "../tableColumns/ProductColumns";
 import ProductDetailDialog from "./ProductDetailDialog";
-
-const ShowProductsTable: React.FC = () => {
-  const { data: products = [], isLoading, error } = GetProducts.useQuery();
+import UpdateProductDialog from "./UpdateProductDialog";
+const ShowAllProductsTable: React.FC = () => {
+  const { data: products = [], isLoading, error } = api.product.GetProducts.useQuery(); 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // For View Details
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false); // For Update
 
   const table = useReactTable({
     data: products,
-    columns: productColumns({ setSelectedProductId, setIsDialogOpen }),
+    columns: productColumns({
+      setSelectedProductId,
+      setIsDialogOpen,
+      setIsUpdateDialogOpen,
+    }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -58,16 +63,14 @@ const ShowProductsTable: React.FC = () => {
       rowSelection,
     },
     initialState: {
-      pagination: {
-        pageSize: 10,
-      },
+      pagination: { pageSize: 5 },
     },
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">Products</h2>
-      {isLoading && <div className="text-center">Loading products...</div>}
+    <div className="max-w-7xl">
+      <h2 className="text-2xl font-bold mb-6 text-center text-black">Products</h2>
+      {isLoading && <div className="text-center text-black">Loading products...</div>}
       {error && (
         <div className="text-center text-red-600">
           Failed to load products: {error.message}
@@ -77,10 +80,8 @@ const ShowProductsTable: React.FC = () => {
         <div className="w-full">
           <div className="flex items-center py-4">
             <Input
-              placeholder="Filter by product name..."
-              value={
-                (table.getColumn("productName")?.getFilterValue() as string) ?? ""
-              }
+              placeholder="Filter by name..."
+              value={(table.getColumn("productName")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
                 table.getColumn("productName")?.setFilterValue(event.target.value)
               }
@@ -101,9 +102,7 @@ const ShowProductsTable: React.FC = () => {
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
@@ -117,13 +116,10 @@ const ShowProductsTable: React.FC = () => {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="text-black">
                         {header.isPlaceholder
                           ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -132,23 +128,17 @@ const ShowProductsTable: React.FC = () => {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
+                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                        <TableCell key={cell.id} className="text-black">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={productColumns.length} className="h-24 text-center">
+                    <TableCell colSpan={productColumns.length} className="h-24 text-center text-black">
                       No products found.
                     </TableCell>
                   </TableRow>
@@ -186,9 +176,16 @@ const ShowProductsTable: React.FC = () => {
         isOpen={isDialogOpen}
         setIsOpen={setIsDialogOpen}
         productId={selectedProductId}
+        onClose={() => setSelectedProductId(null)}
+      />
+      <UpdateProductDialog
+        isOpen={isUpdateDialogOpen}
+        setIsOpen={setIsUpdateDialogOpen}
+        productId={selectedProductId}
+        onClose={() => setSelectedProductId(null)}
       />
     </div>
   );
 };
 
-export default ShowProductsTable;
+export default ShowAllProductsTable;

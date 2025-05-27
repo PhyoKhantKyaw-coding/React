@@ -272,17 +272,14 @@ const AdminHomeView = () => {
             {
                 activeSidebar === 'products' ? (
                     <>
-                        <h1 className="text-xl font-bold mb-4 text-white">Products</h1>
                         <ShowProductsTable />
                     </>
                 ) : activeSidebar === 'sales' ? (
                     <>
-                        <h1 className="text-xl font-bold mb-4 text-white">Sales</h1>
                         < ShowAllSalesTable/>
                     </>
                 ) : activeSidebar === 'users' ? (
                     <>
-                        <h1 className="text-xl font-bold mb-4 text-white">Users</h1>
                         < ShowAllUserTable/>
                     </>
                 ): null
@@ -290,7 +287,6 @@ const AdminHomeView = () => {
           
             </div>
             <div className="col-span-1 bg-black/20 rounded-2xl p-4 shadow">
-                <h1 className="text-xl font-bold mb-4 text-white">Add Product</h1>
                 <AddProductForm />
             </div>
         </div>

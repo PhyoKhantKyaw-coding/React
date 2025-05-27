@@ -37,7 +37,7 @@ export const userColumns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className="text-white hover:text-white hover:bg-gray-600"
+        className="text-black hover:text-black hover:bg-gray-600"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Name
@@ -51,7 +51,7 @@ export const userColumns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className="text-white hover:text-white hover:bg-gray-600"
+        className="text-black hover:text-black hover:bg-gray-600"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Email
@@ -61,39 +61,25 @@ export const userColumns: ColumnDef<User>[] = [
     cell: ({ row }) => <div>{row.original.email || "No email"}</div>,
   },
   {
-    accessorKey: "role",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="text-white hover:text-white hover:bg-gray-600"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Role
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
-  },
-    {
     accessorKey: "phone",
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className="text-white hover:text-white hover:bg-gray-600"
+        className="text-black hover:text-white hover:bg-gray-600"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Role
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        Phone Number
+        <ArrowUpDown className="h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.original.phone}</div>,
+    cell: ({ row }) => <div>{row.original.phoneNumber}</div>,
   },
   {
     accessorKey: "status",
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className="text-white hover:text-white hover:bg-gray-600"
+        className="text-black hover:text-white hover:bg-gray-600"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Status

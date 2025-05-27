@@ -33,7 +33,7 @@ const AddtoCart: React.FC<AddToCartProps> = ({ setIsOpen }) => {
       if (response.message === "Add Successfully") {
         dispatch(clearCart());
         queryClient.invalidateQueries({ queryKey: ["products"] });
-        toast.success(`Sale created successfully! Sale ID: ${response.data?.saleId}`, {
+        toast.success(`Sale created successfully`, {
           position: "top-right",
           duration: 3000,
           dismissible: true,

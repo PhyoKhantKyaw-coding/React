@@ -10,6 +10,7 @@ import { store } from '@/store';
 import { Provider } from 'react-redux';
 import DashBoardLayout from '@/layouts/DashBoardLayout';
 import AdminDashboardPage from '@/modules/admin/AdminHomeView';
+import OrdersHistory from '@/modules/home/chunks/OrdersHistory';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <RetailHomeView /> 
+      },
+      {
+        path: 'orders',
+        element: <OrdersHistory /> 
       }
     ]
   },
