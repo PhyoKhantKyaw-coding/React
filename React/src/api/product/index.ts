@@ -43,6 +43,21 @@ export const updateProduct = {
     });
   },
 };
+export const deleteProduct = {
+  useMutation: (
+    opt?: Partial<UseMutationOptions<productResponse, Error, string>>
+  ) => {
+    return useMutation<productResponse, Error, string>({
+      mutationFn: async (productId: string): Promise<productResponse> => {
+        const response = await axios.delete<{ data: productResponse }>(
+          `Product/DeleteProduct?id=${productId}`
+        );
+        return response.data.data;
+      },
+      ...opt,
+    });
+  }
+};
 export const GetProducts = {
   useQuery: (
     opt?: Partial<UseQueryOptions<Product[], Error>>

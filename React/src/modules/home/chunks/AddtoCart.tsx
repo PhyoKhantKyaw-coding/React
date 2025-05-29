@@ -14,9 +14,6 @@ import useAuth from "@/hooks/useAuth";
 interface AddToCartProps {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-
-
 const AddtoCart: React.FC<AddToCartProps> = ({ setIsOpen }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.cartItems);

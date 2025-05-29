@@ -89,9 +89,6 @@ const DefaultLayout: React.FC = () => {
               <Link to="/" className="hover:underline">
                 Home
               </Link>
-              <Link to="/" className="hover:underline">
-                Products
-              </Link>
               <div className="relative mb-2">
                 <Link to="/orders" className="hover:underline mr-3">
                   Orders

@@ -4,12 +4,39 @@ import { useDispatch } from "react-redux";
 import { openLoader, hideLoader } from "@/store/features/loaderSlice";
 import api from "@/api";
 import Loader from "@/components/Loader";
+import { z } from "zod";
+
+// Define Zod schema for registration form
+const RegisterSchema = z
+  .object({
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters long")
+      .max(50, "Username must be less than 50 characters"),
+    email: z.string().email("Valid email is required"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .max(100, "Password must be less than 100 characters"),
+    confirmPassword: z.string(),
+    phoneNumber: z
+      .string()
+      .regex(/^\+?[1-9]\d{1,14}$/, "Valid phone number is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+const OtpSchema = z.string().min(6, "OTP must be at least 6 characters").max(6, "OTP must be 6 characters");
+
+type RegisterFormData = z.infer<typeof RegisterSchema>;
 
 const RegisterView = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     username: "",
     email: "",
     password: "",
@@ -17,22 +44,23 @@ const RegisterView = () => {
     phoneNumber: "",
   });
 
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [otpDialogOpen, setOtpDialogOpen] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
-
 
   const {
     mutate: registerMutate,
     isPending: isRegisterPending,
   } = api.login.register.useMutation({
     onSuccess: (data) => {
-      console.log("Register API Response:", data); 
+      console.log("Register API Response:", data);
       if (data.status === 0 && data.message !== "User already exists. Register Failed") {
-        console.log("Email after registration:", formData.email); 
+        console.log("Email after registration:", formData.email);
         setOtpDialogOpen(true);
         setError(null);
+        setFormErrors({});
         setFormData({
           username: "",
           email: formData.email,
@@ -45,18 +73,17 @@ const RegisterView = () => {
       }
     },
     onError: (error) => {
-      console.error("Register Error:", error); 
+      console.error("Register Error:", error);
       setError(error?.message || "Registration failed");
     },
   });
 
-  // OTP verify mutation
   const {
     mutate: verifyOtpMutate,
     isPending: isVerifyOtpPending,
   } = api.login.verifyOtp.useMutation({
     onSuccess: (data) => {
-      console.log("Verify OTP Response:", data); 
+      console.log("Verify OTP Response:", data);
       if (data.status === 0 && data.message === "Email verified successfully.") {
         setOtpDialogOpen(false);
         navigate("/auth/login");
@@ -65,7 +92,7 @@ const RegisterView = () => {
       }
     },
     onError: (error) => {
-      console.error("Verify OTP Error:", error); 
+      console.error("Verify OTP Error:", error);
       const apiError = error as { errors?: { email?: string[] }, message?: string };
       const errorMessage =
         apiError?.errors?.email?.[0] ||
@@ -74,7 +101,6 @@ const RegisterView = () => {
       setOtpError(errorMessage);
     },
   });
-
 
   const {
     mutate: resendOtpMutate,
@@ -90,7 +116,7 @@ const RegisterView = () => {
     },
     onError: (error) => {
       console.error("Resend OTP Error:", {
-        message: error?.message
+        message: error?.message,
       });
       const apiError = error as { errors?: { email?: string[] }, message?: string };
       const errorMessage =
@@ -120,24 +146,28 @@ const RegisterView = () => {
       ...prev,
       [id]: id === "email" ? value.trim() : value,
     }));
+    // Clear error for the field being edited
+    setFormErrors((prev) => ({ ...prev, [id]: "" }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setFormErrors({});
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    const result = RegisterSchema.safeParse(formData);
+
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+      const formattedErrors: Record<string, string> = {};
+      Object.entries(errors).forEach(([key, value]) => {
+        formattedErrors[key] = value?.[0] || "";
+      });
+      setFormErrors(formattedErrors);
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailRegex.test(formData.email)) {
-      setError("Valid email is required");
-      return;
-    }
-
-    console.log("Submitting registration with email:", formData.email); 
+    console.log("Submitting registration with email:", formData.email);
     registerMutate({
       name: formData.username,
       email: formData.email,
@@ -150,12 +180,19 @@ const RegisterView = () => {
     e.preventDefault();
     setOtpError(null);
 
+    const result = OtpSchema.safeParse(otp);
+
+    if (!result.success) {
+      setOtpError(result.error.flatten().formErrors[0] || "Invalid OTP");
+      return;
+    }
+
     if (!formData.email) {
       setOtpError("Email is required to verify OTP");
       return;
     }
 
-    console.log("Verifying OTP with email:", formData.email, "and OTP:", otp); 
+    console.log("Verifying OTP with email:", formData.email, "and OTP:", otp);
     verifyOtpMutate({
       email: formData.email,
       otp,
@@ -176,7 +213,7 @@ const RegisterView = () => {
     <div className="flex justify-center items-center min-h-screen min-w-full">
       <div className="relative bg-gradient-to-r from-blue-400 to-green-400 shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6 z-10">
         {(isRegisterPending || isVerifyOtpPending || isResendOtpPending) && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-2xl z-20">
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl z-20">
             <Loader />
           </div>
         )}
@@ -200,6 +237,9 @@ const RegisterView = () => {
               required
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
             />
+            {formErrors.username && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>
+            )}
           </div>
 
           <div>
@@ -214,6 +254,9 @@ const RegisterView = () => {
               required
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
             />
+            {formErrors.email && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+            )}
           </div>
 
           <div>
@@ -228,6 +271,9 @@ const RegisterView = () => {
               required
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
             />
+            {formErrors.phoneNumber && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.phoneNumber}</p>
+            )}
           </div>
 
           <div>
@@ -242,6 +288,9 @@ const RegisterView = () => {
               required
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
             />
+            {formErrors.password && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>
+            )}
           </div>
 
           <div>
@@ -256,6 +305,9 @@ const RegisterView = () => {
               required
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
             />
+            {formErrors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword}</p>
+            )}
           </div>
 
           <button

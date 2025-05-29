@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 const sidebarData = [
   { to: "products", label: "Dashboard" },
   { to: "users", label: "Users" },
-  { to: "categories", label: "Categories" },
   { to: "sales", label: "Sales" }
 ];
 
@@ -17,7 +16,6 @@ const AdminDashboardLayout = () => {
   const [viewProfileBox, setViewProfileBox] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [user, setUser] = useState<{ name: string | undefined; email: string | undefined } | null>(null);
   const profile = useRef<HTMLDivElement>(null);
   const activeSidebar = useSelector((state: RootState) => state.adminSidebar.sidebar);
   const dispatch = useDispatch();
