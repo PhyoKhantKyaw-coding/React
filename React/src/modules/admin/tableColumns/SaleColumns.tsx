@@ -51,7 +51,7 @@ export const saleColumns = ({ setSelectedSaleId, setIsDialogOpen }: SaleTablePro
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Sale Date
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 h-4 w-3" />
       </Button>
     ),
     cell: ({ row }) => {
