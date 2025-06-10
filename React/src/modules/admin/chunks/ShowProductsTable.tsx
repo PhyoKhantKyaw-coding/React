@@ -32,7 +32,7 @@ import productColumns from "../tableColumns/ProductColumns";
 import ProductDetailDialog from "./ProductDetailDialog";
 import UpdateProductDialog from "./UpdateProductDialog";
 const ShowAllProductsTable: React.FC = () => {
-  const { data: products = [], isLoading, error } = api.product.GetProducts.useQuery(); 
+  const { data: products = [], isLoading, error } = api.product.AdminGetAllProducts.useQuery(); 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

@@ -28,7 +28,7 @@ export function ProductColumns({
   const queryClient = useQueryClient();
   const deleteProductMutation = api.product.deleteProduct.useMutation({
     onSuccess: () => {      
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
       toast.success("Product deleted successfully!");
     },
     onError: () => {

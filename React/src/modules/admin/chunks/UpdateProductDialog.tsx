@@ -81,7 +81,7 @@ const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
     const { mutate, isPending: isMutating } = api.product.updateProduct.useMutation({
         onSuccess: () => {
 
-            queryClient.invalidateQueries({ queryKey: ["products"] });
+            queryClient.invalidateQueries({ queryKey: ["product"] });
             form.reset();
             handleClose();
         },

@@ -72,6 +72,20 @@ export const GetProducts = {
     });
   },
 };
+export const AdminGetAllProducts = {
+  useQuery: (
+    opt?: Partial<UseQueryOptions<Product[], Error>>
+  ) => {
+    return useQuery<Product[], Error>({
+      queryKey: ["product"],
+      queryFn: async (): Promise<Product[]> => {
+        const response = await axios.get<productsResponse>("Product/AdminGetAllProducts");
+        return response.data.data;
+      },
+      ...opt,
+    });
+  },
+};
 export const GetProductById = {
   useQuery: (
     productId: string,
